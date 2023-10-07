@@ -1,8 +1,21 @@
 const express = require('express');
 const router = express.Router();
 const {Todo} = require('../db/index')
+const {User} = require('../db/auth');
+const { authenticateJwtToken } = require('../middleware/authMiddleware');
 
-router.get("/", async (req,res) => {
+router.get("/me", authenticateJwtToken, async(req,res) => {
+    console.log("yaha ");
+    console.log(req.user);
+    const username = await User.findOne({username:req.user.username});
+    console.log(username);
+    if(username) {
+        return res.json({username})
+    }
+    res.json({message: "Not logged in"})
+})
+
+router.get("/", authenticateJwtToken, async (req,res) => {
     try {
         const todos = await Todo.find();
         res.status(200).json({todos: todos});
@@ -12,7 +25,7 @@ router.get("/", async (req,res) => {
     }
 })
 
-router.post("/", async (req,res) => {
+router.post("/", authenticateJwtToken, async (req,res) => {
     const todoTitle = req.body.title;
     const todoDescription = req.body.description;
 
@@ -33,9 +46,9 @@ router.post("/", async (req,res) => {
     });
 })
 
-router.delete("/", async (req,res) => {
+router.delete("/:todoId", authenticateJwtToken, async (req,res) => {
     try {
-        const todoId = req.header("_id");
+        const todoId = req.params.todoId;
         if(!todoId || todoId.trimEnd() === "") {
             res.status(400).json({error: "Todo Id should Not be empty"});
         }  
@@ -52,7 +65,7 @@ router.delete("/", async (req,res) => {
     }
 })
 
-router.put("/:todoId", async (req, res) => {
+router.put("/:todoId", authenticateJwtToken, async (req, res) => {
     try {
         const todoId = req.params.todoId;
         const todoTitle = req.body.title;
