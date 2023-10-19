@@ -1,13 +1,8 @@
-const express = require('express');
+import express from 'express'
 const router = express.Router();
-const {User} = require("../db/auth");
-const jwt = require('jsonwebtoken');
+import {User} from "../db/auth";
+import jwt from 'jsonwebtoken'
 require('dotenv').config();
-
-const generateToken = (user) => {
-    const data = {user};
-    return jwt.sign(data, process.env.JWT_SECRET, {expiresIn: '1h'})
-}
 
 router.post("/signup", async (req,res) => {
     try {
@@ -28,8 +23,10 @@ router.post("/signup", async (req,res) => {
         const user = await new User({
             username,
             password
-        })
-        const jwtToken = generateToken(user);
+        })    
+        if(!process.env.JWT_SECRET)
+            return res.status(500).json({message:"Internal server error"});
+        const jwtToken = jwt.sign({user}, process.env.JWT_SECRET, {expiresIn: '1h'})
         await user.save();
         res.status(200).json({message: "Singup Successful", jwtToken});
     } catch(error) {
@@ -51,8 +48,13 @@ router.post("/login", async (req,res) => {
         const existingUser = await User.findOne({username, password});
         if(!existingUser)
             return res.status(404).json({error: "Either Username or password is not correct "});
-        
-        const jwtToken = generateToken(username);
+        const user = await new User({
+            username,
+            password
+        })  
+        if(!process.env.JWT_SECRET)
+            return res.status(500).json({message:"Internal server error"});
+        const jwtToken = jwt.sign({user}, process.env.JWT_SECRET, {expiresIn: '1h'})
         res.status(200).json({message: "Login Successfully", jwtToken});
     }
     catch (error) {
@@ -61,4 +63,4 @@ router.post("/login", async (req,res) => {
     }
 })
 
-module.exports = router 
+export default router;

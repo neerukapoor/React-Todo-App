@@ -1,13 +1,12 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const {Todo} = require('../db/index')
-const {User} = require('../db/auth');
-const { authenticateJwtToken } = require('../middleware/authMiddleware');
+import {Todo} from '../db/index'
+import {User} from '../db/auth';
+import { authenticateJwtToken } from '../middleware/authMiddleware'
 
 router.get("/me", authenticateJwtToken, async(req,res) => {
-    console.log("yaha ");
-    console.log(req.user);
-    const username = await User.findOne({username:req.user.username});
+    const usernameFromHeader = req.headers["user"];
+    const username = await User.findOne({usernameFromHeader});
     console.log(username);
     if(username) {
         return res.json({username})
@@ -19,7 +18,7 @@ router.get("/", authenticateJwtToken, async (req,res) => {
     try {
         const todos = await Todo.find();
         res.status(200).json({todos: todos});
-    } catch {
+    } catch(error) {
         console.error(error);
         res.status(500).json({ error: "An error occurred while fetching todos from the database" });
     }
@@ -97,4 +96,4 @@ router.put("/:todoId", authenticateJwtToken, async (req, res) => {
     }
 })
 
-module.exports = router;
+export default router;
