@@ -3,13 +3,18 @@ const app = express();
 import mongoose from 'mongoose';
 import cors from 'cors';
 const PORT = 3000;
-require('dotenv').config();
+import * as dotenv from 'dotenv';
+import indexRouter from './routes/index.ts';
+import authRouter from './routes/auth.ts';
+dotenv.config();
 
 app.use(express.json());
 app.use(cors());
 
-app.use("/", require('./routes/index'));
-app.use("/auth", require('./routes/auth'));
+
+
+app.use("/", indexRouter);
+app.use("/auth", authRouter);
 
 if(process.env.MONGO_DATABASE)
 {
