@@ -5,7 +5,7 @@ import cors from 'cors';
 const PORT = 3000;
 import * as dotenv from 'dotenv';
 import indexRouter from './routes/index.ts';
-import authRouter from './routes/auth.ts';
+// import authRouter from './routes/auth.ts';
 dotenv.config();
 
 app.use(express.json());
@@ -14,7 +14,7 @@ app.use(cors());
 
 
 app.use("/", indexRouter);
-app.use("/auth", authRouter);
+// app.use("/auth", authRouter);
 
 if(process.env.MONGO_DATABASE)
 {

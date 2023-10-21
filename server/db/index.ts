@@ -1,8 +1,8 @@
-import mongoose from 'mongoose'
+// import mongoose from 'mongoose'
 
-const todoSchema = new mongoose.Schema({
-    todoTitle: {type:String},
-    todoDescription: {type:String}
-})
+// const todoSchema = new mongoose.Schema({
+//     todoTitle: {type:String},
+//     todoDescription: {type:String}
+// })
 
-export const Todo = mongoose.model('Todo', todoSchema);
+// export const Todo = mongoose.model('Todo', todoSchema);

@@ -10,5 +10,6 @@
     "outDir": "dist",     
     "allowImportingTsExtensions": true,
     "noEmit": true,
+    "baseUrl": "./"
   }
 }
